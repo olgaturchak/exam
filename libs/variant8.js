@@ -1,11 +1,11 @@
 /**
  * Calculate the size of a multi dimensional array.
  * This function checks the size of the first entry, it does not validate
- * whether all dimensions match. (use function `validate` for that)
+ * whether all dimensions match. (use function validate for that)
  * @param {Array} x
  * @Return {Number[]} size
  */
-export function arraySize (x) {
+ function arraySize (x) {
   const s = []
 
   while (Array.isArray(x)) {
@@ -60,7 +60,7 @@ function _validate (array, size, dim) {
  * @param {number[]} size  Array with the size of each dimension
  * @throws DimensionError
  */
-export function validate (array, size) {
+ function validate (array, size) {
   const isScalar = (size.length === 0)
   if (isScalar) {
     // scalar
@@ -79,8 +79,8 @@ export function validate (array, size) {
  * @param {number} index    Zero-based index
  * @param {number} [length] Length of the array
  */
-export function validateIndex (index, length) {
-  if (!isNumber(index) || !isInteger(index)) {
+ function validateIndex (index, length) {
+  if (!isNumber(index) || !Number.isInteger(index)) {
     throw new TypeError('Index must be an integer (value: ' + index + ')')
   }
   if (index < 0 || (typeof length === 'number' && index >= length)) {
@@ -93,12 +93,17 @@ export function validateIndex (index, length) {
  * @param {Array} array         Array to be resized
  * @param {Array.<number>} size Array with the size of each dimension
  * @param {*} [defaultValue=0]  Value to be filled in in new entries,
- *                              zero by default. Specify for example `null`,
+ *                              zero by default. Specify for example null,
  *                              to clearly see entries that are not explicitly
  *                              set.
  * @return {Array} array         The resized array
  */
-export function resize (array, size, defaultValue) {
+
+ function isNumber(value) {
+   return typeof value === 'number' && !isNaN(value);
+ }
+
+ function resize (array, size, defaultValue) {
   // TODO: add support for scalars, having size=[] ?
 
   // check the type of the arguments
@@ -111,11 +116,12 @@ export function resize (array, size, defaultValue) {
 
   // check whether size contains positive integers
   size.forEach(function (value) {
-    if (!isNumber(value) || !isInteger(value) || value < 0) {
+    if (!isNumber(value) || !Number.isInteger(value) || value < 0) {
       throw new TypeError('Invalid size, must contain positive integers ' +
         '(size: ' + format(size) + ')')
     }
   })
+
 
   // recursively resize the array
   const _defaultValue = (defaultValue !== undefined) ? defaultValue : 0
@@ -182,4 +188,11 @@ function _resize (array, size, dim, defaultValue) {
       array[i] = defaultValue
     }
   }
+}
+
+module.exports = {
+  validateIndex,
+  resize,
+  arraySize,
+  validate,
 }
